@@ -1,0 +1,10 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-16.04'
+
+container: rust:1.36
+
+steps:
+- script: printenv
