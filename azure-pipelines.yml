@@ -23,4 +23,4 @@ steps:
   enabled: false
 - template: echo-variables.yml
   parameters:
-    target: $(RUST_VERSION)
+    target: ${{RUST_VERSION}}
