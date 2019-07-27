@@ -17,6 +17,7 @@ fn main() {
             dest.push(&path);
         }
     }
+    a
 
     println!("{}", &dest.join(":"));
 
