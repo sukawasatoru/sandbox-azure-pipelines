@@ -8,3 +8,4 @@ container: rust:1.36
 
 steps:
 - script: cargo build
+- script: cargo clippy
