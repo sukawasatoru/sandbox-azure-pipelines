@@ -1,0 +1,5 @@
+parameters:
+  target: '(none)'
+
+steps:
+- script: echo ${{parameters.target}}

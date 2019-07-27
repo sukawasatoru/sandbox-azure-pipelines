@@ -1,6 +1,4 @@
 variables:
-  CARGO_CACHE_FOLDER: $(Pipeline.Workspace)/.cargo
-  RUSTUP_CACHE_FOLDER: $(Pipeline.Workspace)/.rustup
   SCCACHE_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/sccache
 trigger:
 - master
@@ -10,24 +8,20 @@ container: rust:1.36
 steps:
 - script: export
   displayName: List variables
+  enabled: false
 - script: rustup component add clippy
   displayName: Setup Clippy
+  enabled: false
 - script: cargo build
   displayName: Build
+  enabled: false
 - script: cargo clippy
   displayName: Clippy
-- script: ls -la $(CARGO_HOME)
-  displayName: ls CARGO_HOME
-  continueOnError: true
-- script: ls -la $(CARGO_CACHE_FOLDER)
-  displayName: ls CARGO_CACHE_FOLDER
-  continueOnError: true
-- script: ls -la $(RUSTUP_CACHE_FOLDER)
-  displayName: ls RUSTUP_CACHE_FOLDER
-  continueOnError: true
-- script: ls -la $(RUSTUP_HOME)
-  displayName: ls RUSTUP_HOME
-  continueOnError: true
-- script: ls -la $(/usr/local/cargo/bin)
-  displayName: ls /usr/local/cargo/bin
-  continueOnError: true
+  enabled: false
+- script: rm -rf $(CARGO_HOME)/.cargo/registry/src
+  displayName: Reduce cargo cache
+  enabled: false
+- template: echo-variables.yml
+  displayName: echo variables
+  parameters:
+    target: $(RUST_VERSION)
