@@ -21,6 +21,7 @@ steps:
 - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
   displayName: Reduce cargo cache
   enabled: false
-- template: echo-variables.yml
-  parameters:
-    target: $[format('{0}', variables['RUST_VERSION'])]
+- script: echo $MYVAL
+  displayName: echo MYVAL
+  env:
+    MYVAL: $[format('{0}', variables['RUST_VERSION'])]
