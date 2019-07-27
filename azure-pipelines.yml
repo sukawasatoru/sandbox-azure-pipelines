@@ -1,12 +1,15 @@
+variables:
+  CARGO_CACHE_FOLDER: $(Pipeline.Workspace)/.cargo
+  RUSTUP_CACHE_FOLDER: $(Pipeline.Workspace)/.rustup
+  SCCACHE_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/sccache
 trigger:
 - master
-
 pool:
   vmImage: 'ubuntu-16.04'
-
 container: rust:1.36
-
 steps:
+- script: export
+  displayName: List variables
 - script: rustup component add clippy
   displayName: Setup Clippy
 - script: cargo build
