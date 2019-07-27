@@ -1,10 +1,11 @@
 variables:
   SCCACHE_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/sccache
+  CONTAINER_VERSION: 1.36
 trigger:
 - master
 pool:
   vmImage: 'ubuntu-16.04'
-container: rust:1.36
+container: rust:${{CONTAINER_VERSION}}
 steps:
 - script: export
   displayName: List variables
@@ -21,7 +22,3 @@ steps:
 - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
   displayName: Reduce cargo cache
   enabled: false
-- script: echo val=$MYVAL
-  displayName: echo MYVAL
-  env:
-    MYVAL: $(RUST_VERSION)
