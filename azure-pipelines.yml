@@ -22,6 +22,5 @@ steps:
   displayName: Reduce cargo cache
   enabled: false
 - template: echo-variables.yml
-  displayName: echo variables
   parameters:
     target: $(RUST_VERSION)
