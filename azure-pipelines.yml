@@ -7,6 +7,14 @@ pool:
   vmImage: 'ubuntu-16.04'
 container: rust:$(CONTAINER_VERSION)
 steps:
+- task: CacheBeta@0
+  inputs:
+    key: |
+      cargo
+      $(Agent.OS)
+      $(Agent.OSArchitecture)
+    path: $(CARGO_CACHE_FOLDER)
+  enabled: false
 - script: export
   displayName: List variables
   enabled: false
@@ -22,3 +30,7 @@ steps:
 - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
   displayName: Reduce cargo cache
   enabled: false
+- script: echo "##vso[task.setvariable variable=AAABC]$CARGO_HOME"
+- script: echo result=$ABC
+  env:
+    ABC: $[AAABC]
