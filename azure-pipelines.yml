@@ -16,3 +16,18 @@ steps:
   displayName: Build
 - script: cargo clippy
   displayName: Clippy
+- script: ls -la $(CARGO_HOME)
+  displayName: ls CARGO_HOME
+  continueOnError: true
+- script: ls -la $(CARGO_CACHE_FOLDER)
+  displayName: ls CARGO_CACHE_FOLDER
+  continueOnError: true
+- script: ls -la $(RUSTUP_CACHE_FOLDER)
+  displayName: ls RUSTUP_CACHE_FOLDER
+  continueOnError: true
+- script: ls -la $(RUSTUP_HOME)
+  displayName: ls RUSTUP_HOME
+  continueOnError: true
+- script: ls -la $(/usr/local/cargo/bin)
+  displayName: ls /usr/local/cargo/bin
+  continueOnError: true
