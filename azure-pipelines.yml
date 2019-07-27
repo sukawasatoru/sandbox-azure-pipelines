@@ -24,4 +24,4 @@ steps:
 - script: echo val=$MYVAL
   displayName: echo MYVAL
   env:
-    MYVAL: format('{0}', $[variables['RUST_VERSION']])
+    MYVAL: $[variables['RUST_VERSION']]
