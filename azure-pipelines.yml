@@ -33,4 +33,5 @@ steps:
 - script: echo "##vso[task.setvariable variable=AAABC]$CARGO_HOME"
 - script: echo result=$ABC
   env:
-    ABC: $[AAABC]
+  - name: ABC
+    value: $[AAABC]
