@@ -6,13 +6,10 @@ pool:
 
 container: rust:1.36
 
-stages:
-- stage: Prepare
-  steps:
-  - script: rustup component add clippy
-- stage: Build
-  steps:
-  - script: cargo build
-- stage: lint
-  steps:
-  - script: cargo clippy
+steps:
+- script: rustup component add clippy
+  displayName: Setup Clippy
+- script: cargo build
+  displayName: Build
+- script: cargo clippy
+  displayName: Clippy
