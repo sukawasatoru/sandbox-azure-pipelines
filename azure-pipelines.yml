@@ -23,4 +23,4 @@ steps:
   enabled: false
 - template: echo-variables.yml
   parameters:
-    target: '$[format('{}', variables.RUST_VERSION)]'
+    target: '$[format('{}', variables.RustVersion)]'
