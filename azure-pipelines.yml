@@ -1,5 +1,5 @@
 variables:
-  SCCACHE_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/sccache
+  SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache 
   SCCACHE_VERSION: 0.2.9
 trigger:
 - master
@@ -46,7 +46,7 @@ jobs:
           rev.1
           $(Agent.OS)
           $(Agent.OSArchitecture)
-        path: $(SCCACHE_CACHE_FOLDER)
+        path: $(SCCACHE_DIR)
         cacheHitVar: CACHE_RESTORED_SCCACHE
       displayName: Cache sccache
     - script: |
