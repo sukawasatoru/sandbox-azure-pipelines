@@ -12,6 +12,7 @@ jobs:
     - script: echo "##vso[task.setvariable variable=AAABC;isOutput=true]$CARGO_HOME"
       name: cargo_home
 - job:
+  dependsOn: bash_env
   pool:
     vmImage: 'ubuntu-16.04'
   container: rust:$(CONTAINER_VERSION)
