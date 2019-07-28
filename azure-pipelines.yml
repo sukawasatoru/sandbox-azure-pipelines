@@ -47,7 +47,7 @@ jobs:
       displayName: Cache Rustup
     - script: rustup component add clippy
       displayName: Setup Clippy
-      condition: ne(variables.CACHE_RESTORED_RUSTUP)
+      condition: ne(variables.CACHE_RESTORED_RUSTUP, 'true')
     - script: cargo build
       displayName: Build
     - script: cargo clippy
