@@ -32,16 +32,16 @@ jobs:
           cargo
           $(Agent.OS)
           $(Agent.OSArchitecture)
-          $($[dependencies.envs.outputs['cargo_version.val']])
-        path: $($[dependencies.envs.outputs['cargo_home.val']]))
+          $(ENVS_CARGO_VERSION)
+        path: $(ENVS_CARGO_HOME)
     - task: CacheBeta@0
       inputs:
         key: |
           rustup
           $(Agent.OS)
           $(Agent.OSArchitecture)
-          $($[dependencies.envs.outputs['cargo_version.val']])
-        path: $($[dependencies.envs.outputs['rustup_home.val']])
+          $(ENVS_CARGO_VERSION)
+        path: $(ENVS_RUSTUP_HOME)
     - script: rustup component add clippy
       displayName: Setup Clippy
     - script: cargo build
