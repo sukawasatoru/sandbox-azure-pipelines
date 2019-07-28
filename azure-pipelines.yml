@@ -1,6 +1,5 @@
 variables:
   SCCACHE_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/sccache
-  CONTAINER_VERSION: 1.36
 trigger:
 - master
 jobs:
@@ -34,6 +33,8 @@ jobs:
           $(Agent.OSArchitecture)
           $(ENVS_CARGO_VERSION)
         path: $(ENVS_CARGO_HOME)
+        cacheHitVar: CACHE_RESTORED_CARGO
+      displayName: Cache Cargo
     - task: CacheBeta@0
       inputs:
         key: |
@@ -42,45 +43,11 @@ jobs:
           $(Agent.OSArchitecture)
           $(ENVS_CARGO_VERSION)
         path: $(ENVS_RUSTUP_HOME)
+        cacheHitVar: CACHE_RESTORED_RUSTUP
+      displayName: Cache Rustup
     - script: rustup component add clippy
       displayName: Setup Clippy
-    - script: cargo build
-      displayName: Build
-    - script: cargo clippy
-      displayName: Clippy
-    - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
-      displayName: Reduce cargo cache
-- job: bash_env
-  condition: false
-  pool:
-    vmImage: 'ubuntu-16.04'
-  container: rust:$(CONTAINER_VERSION)
-  steps:
-    - script: export
-      displayName: List variables
-    - script: echo "##vso[task.setvariable variable=val;isOutput=true]$CARGO_HOME"
-      name: cargo_home
-- job:
-  dependsOn: bash_env
-  condition: false
-  pool:
-    vmImage: 'ubuntu-16.04'
-  container: rust:$(CONTAINER_VERSION)
-  variables:
-    AA: $[dependencies.bash_env.outputs['cargo_home.val']]
-  steps:
-    - script: echo "$AA"
-      enabled: false
-    - task: CacheBeta@0
-      inputs:
-        key: |
-          cargo
-          $(Agent.OS)
-          $(Agent.OSArchitecture)
-        path: $(CARGO_CACHE_FOLDER)
-      enabled: false
-    - script: rustup component add clippy
-      displayName: Setup Clippy
+      condition: ne(variables.CACHE_RESTORED_RUSTUP)
     - script: cargo build
       displayName: Build
     - script: cargo clippy
