@@ -7,7 +7,6 @@ jobs:
 - job: envs
   pool:
     vmImage: 'ubuntu-16.04'
-  condition: false
   steps:
     - checkout: none
     - script: export
