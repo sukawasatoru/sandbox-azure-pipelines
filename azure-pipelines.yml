@@ -21,6 +21,10 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: envs
+  variables:
+    ENVS_CARGO_HOME: $[dependencies.envs.outputs['cargo_home.val']]
+    ENVS_CARGO_VERSION: $[dependencies.envs.outputs['cargo_version.val']]
+    ENVS_RUSTUP_HOME: $[dependencies.envs.outputs['rustup_home.val']]
   steps:
     - task: CacheBeta@0
       inputs:
@@ -28,16 +32,16 @@ jobs:
           cargo
           $(Agent.OS)
           $(Agent.OSArchitecture)
-          $[dependencies.envs.outputs['cargo_version.val']]
-        path: $[dependencies.envs.outputs['cargo_home.val']]
+          $($[dependencies.envs.outputs['cargo_version.val']])
+        path: $($[dependencies.envs.outputs['cargo_home.val']]))
     - task: CacheBeta@0
       inputs:
         key: |
-          cargo
+          rustup
           $(Agent.OS)
           $(Agent.OSArchitecture)
-          $[dependencies.envs.outputs['cargo_version.val']]
-        path: $[dependencies.envs.outputs['rustup_home.val']]
+          $($[dependencies.envs.outputs['cargo_version.val']])
+        path: $($[dependencies.envs.outputs['rustup_home.val']])
     - script: rustup component add clippy
       displayName: Setup Clippy
     - script: cargo build
@@ -47,6 +51,7 @@ jobs:
     - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
       displayName: Reduce cargo cache
 - job: bash_env
+  condition: false
   pool:
     vmImage: 'ubuntu-16.04'
   container: rust:$(CONTAINER_VERSION)
@@ -57,6 +62,7 @@ jobs:
       name: cargo_home
 - job:
   dependsOn: bash_env
+  condition: false
   pool:
     vmImage: 'ubuntu-16.04'
   container: rust:$(CONTAINER_VERSION)
