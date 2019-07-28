@@ -17,7 +17,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   container: rust:$(CONTAINER_VERSION)
   variables:
-    AA: $[dependencies.bash_env.outputs]
+    AA: $[dependencies.bash_env.outputs['cargo_home']]
   steps:
     - script: echo "$AA"
     - task: CacheBeta@0
