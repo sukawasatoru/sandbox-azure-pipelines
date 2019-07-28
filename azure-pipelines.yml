@@ -16,6 +16,29 @@ jobs:
     - script: ls -la $(CARGO_HOME)
       displayName: ls -la $(CARGO_HOME)
       continueOnError: true
+- job: build_on_vm
+  pool:
+    vmImage: 'ubuntu-16.04'
+  dependsOn: vm_env
+  steps:
+    - script: echo "$AA"
+      enabled: false
+    - task: CacheBeta@0
+      inputs:
+        key: |
+          cargo
+          $(Agent.OS)
+          $(Agent.OSArchitecture)
+        path: $(CARGO_CACHE_FOLDER)
+      enabled: false
+    - script: rustup component add clippy
+      displayName: Setup Clippy
+    - script: cargo build
+      displayName: Build
+    - script: cargo clippy
+      displayName: Clippy
+    - script: rm -rf $(CARGO_HOME)/.cargo/registry/src
+      displayName: Reduce cargo cache
 - job: bash_env
   pool:
     vmImage: 'ubuntu-16.04'
