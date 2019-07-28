@@ -4,33 +4,40 @@ variables:
 trigger:
 - master
 jobs:
-- job: vm_env
+- job: envs
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+    - checkout: none
     - script: export
       displayName: List variables
-    - script: which cargo
-      displayName: which cargo
-      continueOnError: true
-    - script: ls -la $(CARGO_HOME)
-      displayName: ls -la $(CARGO_HOME)
-      continueOnError: true
-- job: build_on_vm
+    - script: echo "##vso[task.setvariable variable=val;isOutput=true]$CARGO_HOME"
+      name: cargo_home
+    - script: echo "##vso[task.setvariable variable=val;isOutput=true]$(cargo --version)"
+      name: cargo_version
+    - script: echo "##vso[task.setvariable variable=val;isOutput=true]$RUSTUP_HOME"
+      name: rustup_home
+- job: build
   pool:
     vmImage: 'ubuntu-16.04'
-  dependsOn: vm_env
+  dependsOn: envs
   steps:
-    - script: echo "$AA"
-      enabled: false
     - task: CacheBeta@0
       inputs:
         key: |
           cargo
           $(Agent.OS)
           $(Agent.OSArchitecture)
-        path: $(CARGO_CACHE_FOLDER)
-      enabled: false
+          $[dependencies.envs.outputs['cargo_version.val']]
+        path: $[dependencies.envs.outputs['cargo_home.val']]
+    - task: CacheBeta@0
+      inputs:
+        key: |
+          cargo
+          $(Agent.OS)
+          $(Agent.OSArchitecture)
+          $[dependencies.envs.outputs['cargo_version.val']]
+        path: $[dependencies.envs.outputs['rustup_home.val']]
     - script: rustup component add clippy
       displayName: Setup Clippy
     - script: cargo build
