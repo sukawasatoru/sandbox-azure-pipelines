@@ -5,6 +5,43 @@ trigger:
   - master
 stages:
   - stage:
+    displayName: Prepare
+    jobs:
+      -job:
+        displayName: Linux
+        pool:
+          vmImage: 'ubuntu-16.04'
+        variables:
+          SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
+        steps:
+          - checkout: none
+          - script: |
+              curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
+              tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
+              echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
+            displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
+          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl
+            artifact: sccache-linux
+      - job:
+        displayName: Windows
+        pool:
+          vmImage: 'windows-latest'
+        variables:
+          RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
+          CARGO_HOME: $(Pipeline.Workspace)\.cargo
+          SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
+        steps:
+          - checkout: none
+          - script: |
+              powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
+              7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
+              echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
+            displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
+          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc
+            artifact: sccache-windows
+  - stage:
     displayName: Build
     jobs:
       - job:
@@ -16,11 +53,14 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
+          - download:
+            artifact: sccache-linux
           - script: |
-              curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-              tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
+              echo $PATH
+              find sccache-linux -type f
               echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -34,16 +74,16 @@ stages:
           CARGO_HOME: $(Pipeline.Workspace)\.cargo
           SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
         steps:
+          - download:
+            artifact: sccache-windows
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
               echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
             displayName: Download Rust
-          - script: |
-              powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
-              7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-              echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
+          - script: echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -59,12 +99,11 @@ stages:
           SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
           - checkout: self
-            fetchDepth: 1
-          - script: |
-              curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-              tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-              echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
+          - download:
+            artifact: sccache-linux
+          - script: echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
           - script: rustup component add clippy
             displayName: Setup Clippy
           - script: cargo clippy
@@ -80,6 +119,8 @@ stages:
           CARGO_HOME: $(Pipeline.Workspace)\.cargo
           SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
         steps:
+          - download:
+            artifact: sccache-windows
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -87,11 +128,9 @@ stages:
             displayName: Download Rust
           - script: rustup component add clippy
             displayName: Setup Clippy
-          - script: |
-              powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
-              7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-              echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
+          - script: echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
           - script: cargo clippy
             displayName: Clippy
           - script: sccache --show-stats
