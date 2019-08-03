@@ -1,5 +1,4 @@
 variables:
-  SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
   SCCACHE_VERSION: 0.2.9
 trigger:
   - master
@@ -9,6 +8,8 @@ jobs:
     condition: false
     pool:
       vmImage: 'ubuntu-16.04'
+    variables:
+      SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
     steps:
       - checkout: self
         fetchDepth: 1
@@ -44,7 +45,18 @@ jobs:
       RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
       CARGO_HOME: $(Pipeline.Workspace)\.cargo
       RUSTC_WRAPPER: sccache
+      SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
+      - task: CacheBeta@0
+        inputs:
+          key: |
+            sccache
+            rev.1
+            $(Agent.OS)
+            $(Agent.OSArchitecture)
+          path: $(SCCACHE_DIR)
+          cacheHitVar: CACHE_RESTORED_SCCACHE
+        displayName: Cache sccache
       - powershell: |
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
           .\rustup-init -vy
