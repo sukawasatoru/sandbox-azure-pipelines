@@ -7,7 +7,7 @@ stages:
   - stage:
     displayName: Prepare
     jobs:
-      -job:
+      - job:
         displayName: Linux
         pool:
           vmImage: 'ubuntu-16.04'
