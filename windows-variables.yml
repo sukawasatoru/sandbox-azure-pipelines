@@ -1,5 +1,0 @@
-variables:
-  RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
-  CARGO_HOME: $(Pipeline.Workspace)\.cargo
-  RUSTC_WRAPPER: sccache
-  SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
