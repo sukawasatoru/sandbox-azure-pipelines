@@ -58,6 +58,7 @@ jobs:
             rev.1
             $(Agent.OS)
             $(Agent.OSArchitecture)
+            $(Build.SourcesDirectory)/Cargo.toml
           path: $(SCCACHE_DIR)
           cacheHitVar: CACHE_RESTORED_SCCACHE
         displayName: Cache sccache
