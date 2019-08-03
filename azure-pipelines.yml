@@ -50,21 +50,18 @@ jobs:
           .\rustup-init -vy
           echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
         displayName: Download Rust
-      - script: |
-          %CARGO_HOME%\bin\rustup.exe component add clippy
+      - script: call rustup component add clippy
         displayName: Setup Clippy
       - script: |
           powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
           7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
           echo "##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc"
         displayName: Setup sccache
-      - script: |
-          %CARGO_HOME%\bin\cargo.exe -v build
+      - script: call cargo -v build
         displayName: Build
-      - script: |
-          %CARGO_HOME%\bin\cargo.exe clippy
+      - script: call cargo clippy
         displayName: Clippy
-      - script: sccache.exe --show-stats
+      - script: call sccache --show-stats
         displayName: Show sccache stats
         condition: eq(variables.CACHE_RESTORED_SCCACHE, 'true')
 
