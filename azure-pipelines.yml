@@ -46,6 +46,8 @@ jobs:
           key: |
             sccache
             rev.1
+            $(Agent.OS)
+            $(Agent.OSArchitecture)
           path: $(SCCACHE_DIR)
           cacheHitVar: CACHE_RESTORED_SCCACHE
       - script: |
