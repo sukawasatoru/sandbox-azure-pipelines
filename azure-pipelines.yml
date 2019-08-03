@@ -41,6 +41,9 @@ jobs:
     pool:
       vmImage: 'windows-latest'
     steps:
-      - pwsh: Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz
-      - script: 7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-      - script: dir
+      - powershell: |
+          Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz
+          7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
+          Write-Output "##vso[task.prependpath]$PWD/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc"
+        displayName: Setup sccache
+      - script: sccache --help
