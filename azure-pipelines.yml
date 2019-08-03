@@ -18,10 +18,9 @@ stages:
           - script: |
               curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
               tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-              echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl
+          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
             artifact: sccache-linux
       - job:
         displayName: Windows
@@ -36,10 +35,9 @@ stages:
           - script: |
               powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
               7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-              echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc
+          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/sccache.exe
             artifact: sccache-windows
   - stage:
     displayName: Build
@@ -56,9 +54,8 @@ stages:
           - download: current
             artifact: sccache-linux
           - script: |
-              echo $PATH
               find sccache-linux -type f
-              echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
+              echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
@@ -81,7 +78,7 @@ stages:
               .\rustup-init -vy
               echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
             displayName: Download Rust
-          - script: echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
+          - script: echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
@@ -101,7 +98,7 @@ stages:
           - checkout: self
           - download: current
             artifact: sccache-linux
-          - script: echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
+          - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
           - script: rustup component add clippy
@@ -128,7 +125,7 @@ stages:
             displayName: Download Rust
           - script: rustup component add clippy
             displayName: Setup Clippy
-          - script: echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
+          - script: echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
           - script: cargo clippy
