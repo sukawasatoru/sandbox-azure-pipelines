@@ -51,7 +51,7 @@ jobs:
           echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
           ls $Env:CARGO_HOME\bin
         displayName: Download Rust
-      - script: %CARGO_HOME%\bin\rustup component add clippy
+      - script: "%CARGO_HOME%\\bin\\rustup component add clippy"
         displayName: Setup Clippy
       - script: exit
       - script: |
