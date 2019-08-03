@@ -50,6 +50,7 @@ jobs:
             $(Agent.OSArchitecture)
           path: $(SCCACHE_DIR)
           cacheHitVar: CACHE_RESTORED_SCCACHE
+          condition: false
       - script: |
           powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
           7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
