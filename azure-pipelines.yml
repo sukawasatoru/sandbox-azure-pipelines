@@ -47,6 +47,7 @@ jobs:
       RUSTC_WRAPPER: sccache
       SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
+      - script: mkdir %SCCACHE_DIR%
       - task: CacheBeta@0
         inputs:
           key: |
@@ -54,7 +55,6 @@ jobs:
             rev.1
             $(Agent.OS)
             $(Agent.OSArchitecture)
-            $(Pipeline.Workspace)\Cargo.toml
           path: $(SCCACHE_DIR)
           cacheHitVar: CACHE_RESTORED_SCCACHE
         displayName: Cache sccache
