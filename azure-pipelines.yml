@@ -41,14 +41,12 @@ jobs:
     pool:
       vmImage: 'windows-latest'
     variables:
-      RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
-      CARGO_HOME: $(Pipeline.Workspace)/.cargo
+      RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
+      CARGO_HOME: $(Pipeline.Workspace)\.cargo
     steps:
       - powershell: |
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
           .\rustup-init -vy
-          Move-Item $HOME\.rustup $Env:RUSTUP_HOME
-          Move-Item $HOME\.cargo $Env:CARGO_HOME
           echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
         displayName: Download Rust
       - script: |
