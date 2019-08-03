@@ -53,12 +53,7 @@ jobs:
           dir %SCCACHE_DIR%
       - task: CacheBeta@0
         inputs:
-          key: |
-            sccache
-            rev.1
-            $(Agent.OS)
-            $(Agent.OSArchitecture)
-            $(Build.SourcesDirectory)/Cargo.toml
+          key: sccache | rev.1 | $(Agent.OS) | $(Agent.OSArchitecture)
           path: $(SCCACHE_DIR)
           cacheHitVar: CACHE_RESTORED_SCCACHE
         displayName: Cache sccache
