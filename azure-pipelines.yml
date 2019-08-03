@@ -49,8 +49,8 @@ jobs:
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
           .\rustup-init -vy
           echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
-          cmd /c path
         displayName: Download Rust
+      - script: path
       - script: call rustup component add clippy
         displayName: Setup Clippy
       - script: |
