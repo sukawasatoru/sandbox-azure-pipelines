@@ -45,7 +45,7 @@ jobs:
       RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
       CARGO_HOME: $(Pipeline.Workspace)\.cargo
       RUSTC_WRAPPER: sccache
-      SCCACHE_DIR: $(Pipeline.Workspace)/Mozilla/sccache
+      SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
       - script: |
           mkdir %SCCACHE_DIR%
