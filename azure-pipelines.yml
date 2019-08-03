@@ -43,7 +43,7 @@ jobs:
     variables:
       RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
       CARGO_HOME: $(Pipeline.Workspace)\.cargo
-      RUSTC_WRAPPER: $(Pipeline.Workspace)\sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc\sccache
+      RUSTC_WRAPPER: $(Pipeline.Workspace)\sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc\sccache.exe
     steps:
       - powershell: |
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
@@ -51,7 +51,7 @@ jobs:
           echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
         displayName: Download Rust
       - script: |
-          %CARGO_HOME%\bin\rustup component add clippy
+          %CARGO_HOME%\bin\rustup.exe component add clippy
         displayName: Setup Clippy
       - script: |
           powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
@@ -59,12 +59,12 @@ jobs:
           echo "##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc"
         displayName: Setup sccache
       - script: |
-          %CARGO_HOME%\bin\cargo -v build
+          %CARGO_HOME%\bin\cargo.exe -v build
         displayName: Build
       - script: |
-          %CARGO_HOME%\bin\cargo clippy
+          %CARGO_HOME%\bin\cargo.exe clippy
         displayName: Clippy
-      - script: sccache --show-stats
+      - script: sccache.exe --show-stats
         displayName: Show sccache stats
         condition: eq(variables.CACHE_RESTORED_SCCACHE, 'true')
 
