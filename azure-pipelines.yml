@@ -41,16 +41,9 @@ jobs:
     pool:
       vmImage: 'windows-latest'
     steps:
-      - task: CacheBeta@0
-        inputs:
-          key: |
-            sccache
-            rev.1
-            $(Agent.OS)
-            $(Agent.OSArchitecture)
-          path: $(SCCACHE_DIR)
-          cacheHitVar: CACHE_RESTORED_SCCACHE
-        condition: false
+      - powershell: |
+          curl -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
+          rustup-init -y
       - script: |
           powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
           7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
