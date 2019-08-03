@@ -1,0 +1,2 @@
+variables:
+  SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
