@@ -18,9 +18,8 @@ stages:
           - script: |
               curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
               tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-            displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
+            displayName: Download sccache
+          - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
             artifact: sccache-linux
       - job:
         displayName: Windows
@@ -35,9 +34,8 @@ stages:
           - script: |
               powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
               7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-            displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/*.exe
+            displayName: Download sccache
+          - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/sccache.exe
             artifact: sccache-windows
   - stage:
     displayName: Build
@@ -53,9 +51,7 @@ stages:
             fetchDepth: 1
           - download: current
             artifact: sccache-linux
-          - script: |
-              find sccache-linux -type f
-              echo "##vso[task.prependpath]$PWD/sccache-linux"
+          - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
