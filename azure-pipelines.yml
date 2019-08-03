@@ -40,11 +40,17 @@ jobs:
     displayName: Build for Windows
     pool:
       vmImage: 'windows-latest'
+    variables:
+      RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
+      CARGO_HOME: $(Pipeline.Workspace)/.cargo
     steps:
       - powershell: |
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
-          .\rustup-init -y
-        displayName: Setup Rust
+          .\rustup-init -vy
+          Move-Item $HOME\.rustup $Env:RUSTUP_HOME
+          Move-Item $HOME\.cargo $Env:CARGO_HOME
+          echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
+        displayName: Download Rust
       - script: |
           powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
           7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
