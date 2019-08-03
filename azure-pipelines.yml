@@ -51,11 +51,12 @@ jobs:
           mkdir %SCCACHE_DIR%
           dir
           dir %SCCACHE_DIR%
-      - cache:
-        key: sccache | rev.1 | $(Agent.OS) | $(Agent.OSArchitecture)
-        rolling: true
-        path: $(SCCACHE_DIR)
-        cacheHitVar: CACHE_RESTORED_SCCACHE
+      - task: CacheBeta@0
+        inputs:
+          key: sccache | rev.1 | $(Agent.OS) | $(Agent.OSArchitecture)
+          rolling: true
+          path: $(SCCACHE_DIR)
+          cacheHitVar: CACHE_RESTORED_SCCACHE
         displayName: Cache sccache
       - powershell: |
           Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
