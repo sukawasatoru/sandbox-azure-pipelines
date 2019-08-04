@@ -34,13 +34,12 @@ stages:
         variables:
           SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
-          - download: current
-            artifact: sccache-linux
           - checkout: self
             fetchDepth: 1
+          - download: current
+            artifact: sccache-linux
           - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -54,10 +53,10 @@ stages:
           CARGO_HOME: $(Pipeline.Workspace)\.cargo
           SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
         steps:
-          - download: current
-            artifact: sccache-windows
           - checkout: self
             fetchDepth: 1
+          - download: current
+            artifact: sccache-windows
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -65,7 +64,6 @@ stages:
             displayName: Download Rust
           - script: echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -80,13 +78,12 @@ stages:
         variables:
           SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
-          - download: current
-            artifact: sccache-linux
           - checkout: self
             fetchDepth: 1
+          - download: current
+            artifact: sccache-linux
           - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
           - script: rustup component add clippy
             displayName: Setup Clippy
           - script: cargo clippy
@@ -102,10 +99,10 @@ stages:
           CARGO_HOME: $(Pipeline.Workspace)\.cargo
           SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
         steps:
-          - download: current
-            artifact: sccache-windows
           - checkout: self
             fetchDepth: 1
+          - download: current
+            artifact: sccache-windows
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -115,7 +112,6 @@ stages:
             displayName: Setup Clippy
           - script: echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
-            workingDirectory: $(Pipeline.Workspace)
           - script: cargo clippy
             displayName: Clippy
           - script: sccache --show-stats
