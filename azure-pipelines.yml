@@ -16,15 +16,13 @@ stages:
               curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
               tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
             displayName: Download sccache for Linux
-            workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
+          - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
             artifact: sccache-linux
           - script: |
               curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-pc-windows-msvc.tar.gz
               tar -xvf sccache-${SCCACHE_VERSION}-x86_64-pc-windows-msvc.tar.gz
             displayName: Download sccache for Windows
-            workingDirectory: $(Pipeline.Workspace)
-          - publish: $(Pipeline.Workspace)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/sccache.exe
+          - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/sccache.exe
             artifact: sccache-windows
   - stage:
     displayName: Build
@@ -36,10 +34,10 @@ stages:
         variables:
           SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
-          - checkout: self
-            fetchDepth: 1
           - download: current
             artifact: sccache-linux
+          - checkout: self
+            fetchDepth: 1
           - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
@@ -58,6 +56,8 @@ stages:
         steps:
           - download: current
             artifact: sccache-windows
+          - checkout: self
+            fetchDepth: 1
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -80,9 +80,10 @@ stages:
         variables:
           SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
-          - checkout: self
           - download: current
             artifact: sccache-linux
+          - checkout: self
+            fetchDepth: 1
           - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
             workingDirectory: $(Pipeline.Workspace)
@@ -103,6 +104,8 @@ stages:
         steps:
           - download: current
             artifact: sccache-windows
+          - checkout: self
+            fetchDepth: 1
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
