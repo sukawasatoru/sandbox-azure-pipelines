@@ -43,6 +43,7 @@ stages:
               ls -la sccache-linux
               echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
+            workindDirectory: $(Pipeline.Workspace)
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -65,6 +66,7 @@ stages:
               dir sccache-windows
               echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
+            workindDirectory: $(Pipeline.Workspace)
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -93,6 +95,7 @@ stages:
               ls -la sccache-linux
               echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
+            workindDirectory: $(Pipeline.Workspace)
           - script: rustup component add clippy
             displayName: Setup Clippy
           - script: cargo clippy
@@ -117,6 +120,7 @@ stages:
               dir sccache-windows
               echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
+            workindDirectory: $(Pipeline.Workspace)
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
