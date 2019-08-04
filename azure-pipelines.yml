@@ -147,7 +147,7 @@ stages:
               dir build-cache-windows
               mkdir %SCCACHE_DIR%
               dir %SCCACHE_DIR%
-              move build-cache-windows\* %SCCACHE_DIR%
+              move "build-cache-windows\*" %SCCACHE_DIR%
             displayName: Setup build cache
             workingDirectory: $(Pipeline.Workspace)
           - powershell: |
