@@ -8,33 +8,20 @@ stages:
     displayName: Prepare
     jobs:
       - job:
-        displayName: Linux
         pool:
           vmImage: 'ubuntu-16.04'
-        variables:
-          SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
         steps:
           - checkout: none
           - script: |
               curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
               tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-            displayName: Download sccache
+            displayName: Download sccache for Linux
           - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-unknown-linux-musl/sccache
             artifact: sccache-linux
-      - job:
-        displayName: Windows
-        pool:
-          vmImage: 'windows-latest'
-        variables:
-          RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
-          CARGO_HOME: $(Pipeline.Workspace)\.cargo
-          SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
-        steps:
-          - checkout: none
           - script: |
-              powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
-              7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-            displayName: Download sccache
+              curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-pc-windows-msvc.tar.gz
+              tar -xvf sccache-${SCCACHE_VERSION}-x86_64-pc-windows-msvc.tar.gz
+            displayName: Download sccache for Windows
           - publish: $(System.DefaultWorkingDirectory)/sccache-$(SCCACHE_VERSION)-x86_64-pc-windows-msvc/sccache.exe
             artifact: sccache-windows
   - stage:
