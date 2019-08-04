@@ -38,7 +38,10 @@ stages:
             fetchDepth: 1
           - download: current
             artifact: sccache-linux
-          - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
+            displayName: Download sccache
+          - script: |
+              ls -la sccache-linux
+              echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
           - script: cargo -v build
             displayName: Build
@@ -57,13 +60,16 @@ stages:
             fetchDepth: 1
           - download: current
             artifact: sccache-windows
+            displayName: Download sccache
+          - script: |
+              dir sccache-windows
+              echo ##vso[task.prependpath]%CD%\sccache-windows
+            displayName: Setup sccache
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
               echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
             displayName: Download Rust
-          - script: echo ##vso[task.prependpath]%CD%\sccache-windows
-            displayName: Setup sccache
           - script: cargo -v build
             displayName: Build
           - script: sccache --show-stats
@@ -82,7 +88,10 @@ stages:
             fetchDepth: 1
           - download: current
             artifact: sccache-linux
-          - script: echo "##vso[task.prependpath]$PWD/sccache-linux"
+            displayName: Download sccache
+          - script: |
+              ls -la sccache-linux
+              echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
           - script: rustup component add clippy
             displayName: Setup Clippy
@@ -103,6 +112,11 @@ stages:
             fetchDepth: 1
           - download: current
             artifact: sccache-windows
+            displayName: Download sccache
+          - script: |
+              dir sccache-windows
+              echo ##vso[task.prependpath]%CD%\sccache-windows
+            displayName: Setup sccache
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
               .\rustup-init -vy
@@ -110,8 +124,6 @@ stages:
             displayName: Download Rust
           - script: rustup component add clippy
             displayName: Setup Clippy
-          - script: echo ##vso[task.prependpath]%CD%\sccache-windows
-            displayName: Setup sccache
           - script: cargo clippy
             displayName: Clippy
           - script: sccache --show-stats
