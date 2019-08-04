@@ -145,7 +145,9 @@ stages:
             displayName: Download build cache
           - script: |
               dir build-cache-windows
+              echo a
               mkdir %SCCACHE_DIR%
+              echo b
               move build-cache-windows\* %SCCACHE_DIR%
             displayName: Setup build cache
             workingDirectory: $(Pipeline.Workspace)
