@@ -49,6 +49,9 @@ stages:
             displayName: Build
           - script: sccache --show-stats
             displayName: Show sccache stats
+          - publish: $(SCCACHE_DIR)
+            artifact: build-cache-linux
+            displayName: Publish build cache
       - job:
         displayName: Windows
         pool:
@@ -77,6 +80,9 @@ stages:
             displayName: Build
           - script: sccache --show-stats
             displayName: Show sccache stats
+          - publish: $(SCCACHE_DIR)
+            artifact: build-cache-windows
+            displayName: Publish build cache
   - stage:
     displayName: Check
     jobs:
@@ -97,6 +103,15 @@ stages:
               ls -la sccache-linux
               echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
+          - download: current
+            artifact: build-cache-linux
+            displayName: Download build cache
+          - script: |
+              ls -la build-cache-linux
+              mkdir .cache
+              mv -v build-cache-linux/sccache $(SCCACHE_DIR)
+            displayName: Setup build cache
             workingDirectory: $(Pipeline.Workspace)
           - script: rustup component add clippy
             displayName: Setup Clippy
@@ -122,6 +137,15 @@ stages:
               dir sccache-windows
               echo ##vso[task.prependpath]%CD%\sccache-windows
             displayName: Setup sccache
+            workingDirectory: $(Pipeline.Workspace)
+          - download: current
+            artifact: build-cache-windows
+            displayName: Download build cache
+          - script: |
+              dir build-cache-windows
+              mkdir Mozilla
+              move build-cache-windows\sccache $(SCCACHE_DIR)
+            displayName: Setup build cache
             workingDirectory: $(Pipeline.Workspace)
           - powershell: |
               Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
