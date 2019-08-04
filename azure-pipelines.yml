@@ -40,6 +40,7 @@ stages:
             artifact: sccache-linux
             displayName: Download sccache
           - script: |
+              chmod +x sccache-linux/sccache
               ls -la sccache-linux
               echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
@@ -92,6 +93,7 @@ stages:
             artifact: sccache-linux
             displayName: Download sccache
           - script: |
+              chmod +x sccache-linux/sccache
               ls -la sccache-linux
               echo "##vso[task.prependpath]$PWD/sccache-linux"
             displayName: Setup sccache
