@@ -8,8 +8,6 @@ jobs:
     displayName: Linux
     pool:
       vmImage: 'ubuntu-16.04'
-    variables:
-      SCCACHE_DIR: $(Pipeline.Workspace)/.cache/sccache
     steps:
       - checkout: self
         fetchDepth: 1
@@ -23,8 +21,19 @@ jobs:
     displayName: Windows
     pool:
       vmImage: 'windows-latest'
-    variables:
-      SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - script: rustup component add clippy
+        displayName: Setup Clippy
+      - script: cargo -v build
+        displayName: Build
+      - script: cargo clippy
+        displayName: Clippy
+  - job:
+    displayName: macOS
+    pool:
+      vmImage: 'macOS-latest'
     steps:
       - checkout: self
         fetchDepth: 1
