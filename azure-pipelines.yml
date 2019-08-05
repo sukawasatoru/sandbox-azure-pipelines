@@ -13,57 +13,24 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 1
-      - script: |
-          curl -sSfLO https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-          tar -xvf sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz
-          echo "##vso[task.prependpath]$PWD/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl"
-        displayName: Setup sccache
-        workingDirectory: $(Pipeline.Workspace)
-        condition: false
-      - script: cargo -v build
-        displayName: Build
       - script: rustup component add clippy
         displayName: Setup Clippy
+      - script: cargo -v build
+        displayName: Build
       - script: cargo clippy
         displayName: Clippy
-      - script: sccache --show-stats
-        displayName: Show sccache stats
-        condition: false
   - job:
     displayName: Windows
     pool:
       vmImage: 'windows-latest'
-    # variables:
-      # RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
-      # CARGO_HOME: $(Pipeline.Workspace)\.cargo
-      # SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
+    variables:
+      SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
-      - script: set
-      - script: |
-          dir C:\Rust\
-          dir C:\Rust\.cargo\
-          dir C:\Rust\.cargo\bin
-      - script: exit 1
       - checkout: self
         fetchDepth: 1
-      - powershell: |
-          Invoke-WebRequest -OutFile rustup-init.exe -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe
-          .\rustup-init -vy
-          echo "##vso[task.prependpath]$Env:CARGO_HOME\bin"
-        displayName: Download Rust
-      - script: |
-          powershell -Command "&{Invoke-WebRequest -Uri https://github.com/mozilla/sccache/releases/download/$Env:SCCACHE_VERSION/sccache-$Env:SCCACHE_VERSION-x86_64-pc-windows-msvc.tar.gz -OutFile sccache.tar.gz}"
-          7z e -bb -so sccache.tar.gz | 7z e -bb -si -ttar
-          @echo ##vso[task.prependpath]%CD%\sccache-%SCCACHE_VERSION%-x86_64-pc-windows-msvc
-        displayName: Setup sccache
-        workingDirectory: $(Pipeline.Workspace)
-        condition: false
-      - script: cargo -v build
-        displayName: Build
       - script: rustup component add clippy
         displayName: Setup Clippy
+      - script: cargo -v build
+        displayName: Build
       - script: cargo clippy
         displayName: Clippy
-      - script: sccache --show-stats
-        displayName: Show sccache stats
-        condition: false
