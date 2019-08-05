@@ -34,9 +34,9 @@ jobs:
     pool:
       vmImage: 'windows-latest'
     variables:
-      RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
-      CARGO_HOME: $(Pipeline.Workspace)\.cargo
-      SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
+      # RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
+      # CARGO_HOME: $(Pipeline.Workspace)\.cargo
+      # SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
       - script: set
       - script: exit 1
