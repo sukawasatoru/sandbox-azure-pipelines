@@ -39,6 +39,10 @@ jobs:
       # SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
       - script: set
+      - script: |
+          dir C:\Rust\
+          dir C:\Rust\.cargo\
+          dir C:\Rust\.cargo\bin
       - script: exit 1
       - checkout: self
         fetchDepth: 1
