@@ -38,7 +38,7 @@ jobs:
       CARGO_HOME: $(Pipeline.Workspace)\.cargo
       SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
     steps:
-      - script: path
+      - script: set
       - script: exit 1
       - checkout: self
         fetchDepth: 1
