@@ -41,7 +41,7 @@ jobs:
       - checkout: self
         fetchDepth: 1
       - script: |
-          curl -sSf https://sh.rustup.rs | bash -s -- --help
+          curl -sSf https://sh.rustup.rs | bash -s -- -vy --no-modify-path
           $(CARGO_HOME)/bin/rustup component add clippy
           echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
         displayName: Setup Rust
