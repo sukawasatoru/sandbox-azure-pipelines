@@ -33,7 +33,7 @@ jobs:
     displayName: Windows
     pool:
       vmImage: 'windows-latest'
-    variables:
+    # variables:
       # RUSTUP_HOME: $(Pipeline.Workspace)\.rustup
       # CARGO_HOME: $(Pipeline.Workspace)\.cargo
       # SCCACHE_DIR: $(Pipeline.Workspace)\Mozilla\sccache
