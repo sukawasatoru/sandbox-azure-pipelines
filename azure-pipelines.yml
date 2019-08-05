@@ -12,7 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 1
       - script: rustup component add clippy
-        displayName: Setup Clippy
+        displayName: Setup Rust
       - script: cargo -v build
         displayName: Build
       - script: cargo clippy
@@ -25,7 +25,7 @@ jobs:
       - checkout: self
         fetchDepth: 1
       - script: rustup component add clippy
-        displayName: Setup Clippy
+        displayName: Setup Rust
       - script: cargo -v build
         displayName: Build
       - script: cargo clippy
@@ -34,12 +34,17 @@ jobs:
     displayName: macOS
     pool:
       vmImage: 'macOS-latest'
+    variables:
+      RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
+      CARGO_HOME: $(Pipeline.Workspace)/.cargo
     steps:
-      - script: export
       - checkout: self
         fetchDepth: 1
-      - script: rustup component add clippy
-        displayName: Setup Clippy
+      - script: |
+          curl -sSf https://sh.rustup.rs | bash -s -- -vy
+          $(CARGO_HOME)/bin/rustup component add clippy
+          echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
+        displayName: Setup Rust
       - script: cargo -v build
         displayName: Build
       - script: cargo clippy
