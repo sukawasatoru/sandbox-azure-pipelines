@@ -44,6 +44,13 @@ jobs:
           $(CARGO_HOME)/bin/rustup component add clippy
           echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
         displayName: Setup Rust
+      - script: |
+          echo system
+          git config --system credential.helper
+          echo global
+          git config --global credential.helper
+          echo local
+          git config credential.helper
       - script: cargo -v build
         displayName: Build
       - script: cargo clippy
