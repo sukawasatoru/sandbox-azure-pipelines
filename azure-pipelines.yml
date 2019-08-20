@@ -54,7 +54,9 @@ jobs:
           echo unset local
           git config --system --unset credential.helper
           echo local
-          git config credential.helper
+          git config credential.helper || echo failed locall
+          echo system
+          git config --system credential.helper || echo failed system
       - script: cargo -v build
         displayName: Build
       - script: cargo clippy
