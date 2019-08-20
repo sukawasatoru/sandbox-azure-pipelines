@@ -7,6 +7,7 @@ jobs:
     displayName: Linux
     pool:
       vmImage: 'ubuntu-16.04'
+    condition: false
     steps:
       - checkout: self
         fetchDepth: 1
@@ -20,6 +21,7 @@ jobs:
     displayName: Windows
     pool:
       vmImage: 'windows-latest'
+    condition: false
     steps:
       - checkout: self
         fetchDepth: 1
@@ -36,6 +38,7 @@ jobs:
     variables:
       RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
       CARGO_HOME: $(Pipeline.Workspace)/.cargo
+    condition: false
     steps:
       - checkout: self
         fetchDepth: 1
@@ -44,6 +47,20 @@ jobs:
           $(CARGO_HOME)/bin/rustup component add clippy
           echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
         displayName: Setup Rust
+      - script: cargo -v build
+        displayName: Build
+      - script: cargo clippy
+        displayName: Clippy
+  - job:
+    displayName: macOS
+    pool:
+      vmImage: 'macOS-latest'
+    variables:
+      RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
+      CARGO_HOME: $(Pipeline.Workspace)/.cargo
+    steps:
+      - checkout: self
+        fetchDepth: 1
       - script: |
           echo system
           git config --system credential.helper
@@ -57,7 +74,5 @@ jobs:
           git config credential.helper || echo failed locall
           echo system
           git config --system credential.helper || echo failed system
-      - script: cargo -v build
-        displayName: Build
-      - script: cargo clippy
-        displayName: Clippy
+          echo cat
+          cat .git/config
