@@ -52,7 +52,7 @@ jobs:
           echo local
           git config credential.helper
           echo unset local
-          git config --unset credential.helper
+          git config --system --unset credential.helper
           echo local
           git config credential.helper
       - script: cargo -v build
