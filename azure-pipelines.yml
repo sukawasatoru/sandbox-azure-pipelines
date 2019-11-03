@@ -2,6 +2,7 @@ variables:
   CI: true
 trigger:
   - master
+  - refs/tags/v*
 jobs:
   - job:
     displayName: Linux
