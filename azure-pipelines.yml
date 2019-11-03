@@ -11,6 +11,7 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 1
+      - script: export
       - script: rustup component add clippy
         displayName: Setup Rust
       - script: cargo -v build
@@ -42,6 +43,7 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 1
+      - script: export
       - script: |
           curl -sSf https://sh.rustup.rs | bash -s -- -v -y --no-modify-path
           $(CARGO_HOME)/bin/rustup component add clippy
