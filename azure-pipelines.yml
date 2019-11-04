@@ -30,6 +30,7 @@ jobs:
       - script: export
       - script: docker-compose build
         displayName: Build
+  - job:
     displayName: Windows
     pool:
       vmImage: 'windows-latest'
