@@ -1,6 +1,6 @@
 version: '3.7'
 services:
   hello:
-    image: docker.pkg.github.com/sukawasatoru/sandbox-azure-pipelines/hello:v0.8.0
+    image: docker.pkg.github.com/sukawasatoru/sandbox-azure-pipelines/hello:v0.11.0
     build:
       context: .
