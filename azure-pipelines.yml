@@ -1,5 +1,6 @@
 variables:
   CI: true
+  IS_TAG: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 trigger:
   - master
   - refs/tags/v*
@@ -27,6 +28,10 @@ jobs:
       - checkout: self
         fetchDepth: 1
       - script: export
+      - script: |
+          grep image: docker-compose.yml | sed -e "s/^ *image:[^:]*:\(.*\)$/\1/" | xargs -IVERSION [ VERSION = "$BUILD_SOURCEBRANCHNAME" ]
+        displayName: Check Tag name
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
       - script: docker-compose build
         displayName: Build
       - script: |
