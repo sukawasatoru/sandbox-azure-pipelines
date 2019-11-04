@@ -29,6 +29,12 @@ jobs:
       - script: export
       - script: docker-compose build
         displayName: Build
+      - script: |
+          docker login docker.pkg.github.com -u sukawasatoru -p $SYSTEM_ACCESSTOKEN
+          docker-compose push
+        displayName: Push
+        env:
+          - SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   - job:
     displayName: Windows
     pool:
