@@ -30,12 +30,12 @@ jobs:
       - script: docker-compose build
         displayName: Build
       - script: |
-          docker login docker.pkg.github.com -u sukawasatoru -p $SYSTEM_ACCESSTOKEN
+          docker login docker.pkg.github.com -u sukawasatoru --password-stdin <<< $GITHUB_TOKEN
           docker-compose push
         displayName: Push
         condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
         env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          GITHBU_TOKEN: $(GITHUB_TOKEN)
   - job:
     displayName: Windows
     pool:
