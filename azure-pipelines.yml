@@ -33,8 +33,9 @@ jobs:
           docker login docker.pkg.github.com -u sukawasatoru -p $SYSTEM_ACCESSTOKEN
           docker-compose push
         displayName: Push
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
         env:
-          - SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   - job:
     displayName: Windows
     pool:
