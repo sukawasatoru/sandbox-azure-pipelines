@@ -68,7 +68,7 @@ jobs:
       - script: echo tag event
         displayName: is tag event by condition syntax
         condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-      - script: '[[ $BUILD_SOURCE_BRANCH =~ ^refs/tags/v ]] && echo tag event || echo not tag event'
+      - script: '[[ $BUILD_SOURCEBRANCH =~ ^refs/tags/v ]] && echo tag event || echo not tag event'
         displayName: is tag event by bash
       - script: |
           echo system
