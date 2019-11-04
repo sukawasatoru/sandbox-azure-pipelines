@@ -8,8 +8,6 @@ jobs:
     displayName: Linux
     pool:
       vmImage: 'ubuntu-16.04'
-    variables:
-      MAPPED_GITHUB_TOKEN: $(GITHUB_TOKEN)
     condition: false
     steps:
       - checkout: self
@@ -32,6 +30,8 @@ jobs:
       - script: |
           echo GITHUB_TOKEN: "$GITHUB_TOKEN"
           echo MAPPED_GITHUB_TOKEN: "$MAPPED_GITHUB_TOKEN"
+        env:
+          MAPPED_GITHUB_TOKEN: $(GITHUB_TOKEN)
       - script: docker-compose build
         displayName: Build
       - script: |
