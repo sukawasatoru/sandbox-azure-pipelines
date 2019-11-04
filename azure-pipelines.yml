@@ -30,8 +30,6 @@ jobs:
         fetchDepth: 1
       - script: export
       - script: echo $MAPPED_GITHUB_TOKEN
-        env:
-          
       - script: docker-compose build
         displayName: Build
       - script: |
