@@ -107,3 +107,17 @@ jobs:
           git config --system credential.helper || echo failed system
           echo cat
           cat .git/config
+  - job:
+    displayName: SelfHosted-macOS
+    pool:
+      demands:
+        - rust
+        - agent.os -equals Darwin
+    variables:
+      RUSTUP_HOME: $(Pipeline.Workspace)/.rustup
+      CARGO_HOME: $(Pipeline.Workspace)/.cargo
+    steps:
+      - script: cargo -v build
+        displayName: Build
+      - script: cargo clippy
+        displayName: Clippy
