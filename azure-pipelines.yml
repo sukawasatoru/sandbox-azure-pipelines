@@ -110,6 +110,7 @@ jobs:
   - job:
     displayName: SelfHosted-macOS
     pool:
+      name: Default
       demands:
         - rust
         - agent.os -equals Darwin
